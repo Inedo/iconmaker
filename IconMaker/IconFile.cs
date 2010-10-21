@@ -83,7 +83,7 @@ namespace IconMaker
                 writer.Write((byte)image.Height);  // height
                 writer.Write((byte)0);  // colors, 0 = more than 256
                 writer.Write((byte)0);  // must be 0
-                writer.Write((ushort)0);    // color planes, should be 0 or 1
+                writer.Write((ushort)1);    // color planes, should be 0 or 1
                 writer.Write((ushort)32);   // bits per pixel
                 writer.Write(data.Length);  // size of bitmap data in bytes
                 writer.Write(offset);   // bitmap data offset in file
@@ -117,6 +117,9 @@ namespace IconMaker
                 {
                     int width = image.PixelWidth;
                     int pixelCount = width * width;
+                    int maskWidth = width / 8;
+                    if ((maskWidth % 4) != 0)
+                        maskWidth += 3 - (maskWidth % 4);
 
                     writer.Write(40);   // size of BITMAPINFOHEADER
                     writer.Write(width);  // icon width/height
@@ -124,7 +127,7 @@ namespace IconMaker
                     writer.Write((short)1); // must be 1
                     writer.Write((short)32);    // bits per pixel
                     writer.Write(0);    // must be 0
-                    writer.Write(pixelCount * 4);   // sizeof bitmap data
+                    writer.Write(pixelCount * 4 + maskWidth * width);   // size of bitmap data
                     writer.Write(new byte[4 * 4]);  // must be 0
 
                     uint[] pixelData = new uint[pixelCount];
@@ -132,12 +135,35 @@ namespace IconMaker
 
                     for(int y = width - 1; y >= 0; y--)
                     {
-                        for(int x = 0; x < width; x++)
-                            writer.Write(pixelData[(y * width) + x]);
+                        for (int x = 0; x < width; x++)
+                        {
+                            uint srcPixel = pixelData[(y * width) + x];
+                            if ((srcPixel >> 24) != 0)
+                                writer.Write(srcPixel);
+                            else
+                                writer.Write((uint)0);
+                        }
                     }
 
-                    for(int i = 0; i < pixelCount / 8; i++)
-                        writer.Write((byte)0);
+                    for (int y = width - 1; y >= 0; y--)
+                    {
+                        for (int x = 0; x < width / 8; x++)
+                        {
+                            byte maskValue = 0;
+
+                            for (int bit = 0; bit < 8; bit++)
+                            {
+                                uint srcPixel = pixelData[(y * width) + (x * 8) + bit];
+                                if ((srcPixel >> 24) < 128)
+                                    maskValue |= (byte)(1 << (7 - bit));
+                            }
+
+                            writer.Write(maskValue);
+                        }
+
+                        for (int padding = 0; padding < ((width / 8) % 4); padding++)
+                            writer.Write((byte)0);
+                    }
                 }
                 else
                 {
