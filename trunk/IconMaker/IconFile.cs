@@ -79,8 +79,8 @@ namespace IconMaker
                 var data = GetImageData(image);
                 imageData.Add(image.PixelWidth, data);
 
-                writer.Write((byte)image.Width);  // width
-                writer.Write((byte)image.Height);  // height
+                writer.Write((byte)image.PixelWidth);  // width
+                writer.Write((byte)image.PixelHeight);  // height
                 writer.Write((byte)0);  // colors, 0 = more than 256
                 writer.Write((byte)0);  // must be 0
                 writer.Write((ushort)1);    // color planes, should be 0 or 1
