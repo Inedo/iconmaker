@@ -12,30 +12,23 @@ namespace IconMaker
     /// </summary>
     public sealed class IconImageCollection : ICollection<BitmapSource>, INotifyCollectionChanged
     {
-        #region Private Fields
         /// <summary>
         /// Stores icon images.
         /// </summary>
         private readonly SortedList<int, BitmapSource> images = new SortedList<int, BitmapSource>();
-        #endregion
 
-        #region Constructors
         /// <summary>
         /// Initializes a new instance of the IconImageCollection class.
         /// </summary>
         public IconImageCollection()
         {
         }
-        #endregion
 
-        #region Public Events
         /// <summary>
         /// Occurs when the collection has changed.
         /// </summary>
         public event NotifyCollectionChangedEventHandler CollectionChanged;
-        #endregion
 
-        #region Public Properties
         /// <summary>
         /// Gets the number of images in the collection.
         /// </summary>
@@ -51,9 +44,7 @@ namespace IconMaker
         {
             get { return false; }
         }
-        #endregion
 
-        #region Public Methods
         /// <summary>
         /// Adds a new image to the collection.
         /// </summary>
@@ -163,9 +154,7 @@ namespace IconMaker
         {
             return this.GetEnumerator();
         }
-        #endregion
 
-        #region Private Static Methods
         /// <summary>
         /// Returns an exception to be raised if the item fails validation.
         /// </summary>
@@ -197,9 +186,7 @@ namespace IconMaker
 
             return new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0.0);
         }
-        #endregion
 
-        #region Private Methods
         /// <summary>
         /// Raises the CollectionChanged event.
         /// </summary>
@@ -210,6 +197,5 @@ namespace IconMaker
             if(handler != null)
                 handler(this, e);
         }
-        #endregion
     }
 }

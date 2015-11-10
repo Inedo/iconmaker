@@ -11,7 +11,6 @@ namespace IconMaker
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region Private Fields
         /// <summary>
         /// File browser dialog for importing images.
         /// </summary>
@@ -31,9 +30,7 @@ namespace IconMaker
         /// Indicates whether the current icon has been modified.
         /// </summary>
         private bool modified;
-        #endregion
 
-        #region Constructors
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
@@ -41,9 +38,7 @@ namespace IconMaker
         {
             InitializeComponent();
         }
-        #endregion
 
-        #region Protected Methods
         /// <summary>
         /// Invoked when the window is initialized.
         /// </summary>
@@ -71,9 +66,7 @@ namespace IconMaker
 
             base.OnDrop(e);
         }
-        #endregion
 
-        #region Private Methods
         /// <summary>
         /// Attempts to load an image file and add it to the icon's image collection.
         /// </summary>
@@ -95,9 +88,7 @@ namespace IconMaker
                 MessageBox.Show(this, ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        #endregion
 
-        #region Event Handlers
         /// <summary>
         /// Handler for commands which are always enabled.
         /// </summary>
@@ -272,6 +263,5 @@ namespace IconMaker
                 this.modified = true;
             }
         }
-        #endregion
     }
 }

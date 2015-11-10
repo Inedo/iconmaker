@@ -11,33 +11,18 @@ namespace IconMaker
     /// </summary>
     public sealed class IconFile
     {
-        #region Private Fields
-        /// <summary>
-        /// Stores the images in the icon.
-        /// </summary>
-        private readonly IconImageCollection images = new IconImageCollection();
-        #endregion
-
-        #region Constructors
         /// <summary>
         /// Initializes a new instance of the IconFile class.
         /// </summary>
         public IconFile()
         {
         }
-        #endregion
 
-        #region Public Properties
         /// <summary>
         /// Gets the images contained in the icon.
         /// </summary>
-        public IconImageCollection Images
-        {
-            get { return this.images; }
-        }
-        #endregion
+        public IconImageCollection Images { get; } = new IconImageCollection();
 
-        #region Public Methods
         /// <summary>
         /// Saves the icon to a file.
         /// </summary>
@@ -67,12 +52,12 @@ namespace IconMaker
             var sortedImages = this.Images;
             var imageData = new Dictionary<int, byte[]>();
 
-            int offset = (this.images.Count * 16) + 6;
+            int offset = (this.Images.Count * 16) + 6;
 
             // Write the icon file header.
             writer.Write((ushort)0);    // must be 0
             writer.Write((ushort)1);    // 1 = ico file
-            writer.Write((ushort)this.images.Count); // number of sizes
+            writer.Write((ushort)this.Images.Count); // number of sizes
             
             foreach(var image in sortedImages)
             {
@@ -98,9 +83,7 @@ namespace IconMaker
             foreach(var data in sortedData)
                 writer.Write(data);
         }
-        #endregion
 
-        #region Private Static Methods
         /// <summary>
         /// Returns a byte array containing the serialized icon image.
         /// </summary>
@@ -175,6 +158,5 @@ namespace IconMaker
                 return memoryStream.ToArray();
             }
         }
-        #endregion
     }
 }
