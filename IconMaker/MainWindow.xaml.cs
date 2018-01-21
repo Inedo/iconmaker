@@ -27,7 +27,7 @@ namespace IconMaker
         private IconFile currentIcon = new IconFile();
         
         /// <summary>
-        /// Indicates whether the current icon has been modified.
+        ///     Indicates whether the current icon has been modified.
         /// </summary>
         private bool modified;
 
@@ -150,13 +150,19 @@ namespace IconMaker
         {
             if(this.currentIcon != null && this.currentIcon.Images.Count > 0 && this.modified)
             {
-                if(MessageBox.Show(this, "Icon has not been saved. Create a new icon?", "Icon Maker", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                MessageBoxResult result = MessageBoxResult.None;
+                if ((result = MessageBox.Show(this, "Icon has not been saved. Create a new icon?", "Icon Maker", MessageBoxButton.YesNo, MessageBoxImage.Question)) == MessageBoxResult.Yes)
                 {
-                    this.currentIcon = new IconFile();
-                    this.imageList.ItemsSource = this.currentIcon.Images;
                     this.modified = false;
                 }
+                else if (result == MessageBoxResult.No)
+                {
+                    return;
+                }
             }
+
+            this.currentIcon = new IconFile();
+            this.imageList.ItemsSource = this.currentIcon.Images;
         }
 
         /// <summary>
