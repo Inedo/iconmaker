@@ -1,4 +1,9 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="AssemblyInfo.cs" company="Inedo">
+//     Inedo 2011
+// </copyright>
+//-----------------------------------------------------------------------
+using System;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
