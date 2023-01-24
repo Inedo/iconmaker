@@ -2,6 +2,7 @@
 
 Icon Maker can be used to quickly and easily create 32-bit color icons from images that already contain alpha information.
 
+![IconMaker](https://user-images.githubusercontent.com/4257305/29038614-f29349ae-7b6d-11e7-8bfe-c64eaeaebf40.png)
 
 ## Installation
 
