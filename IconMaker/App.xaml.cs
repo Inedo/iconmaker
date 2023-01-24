@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace IconMaker
+﻿namespace IconMaker
 {
     /// <summary>
     /// Interaction logic for App.xaml

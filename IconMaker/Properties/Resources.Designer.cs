@@ -19,10 +19,10 @@ namespace IconMaker.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace IconMaker.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("IconMaker.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace IconMaker.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace IconMaker.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Image dimensions must not be greater than 256 pixels..
         /// </summary>
-        internal static string ImageTooBig {
+        public static string ImageTooBig {
             get {
                 return ResourceManager.GetString("ImageTooBig", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace IconMaker.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Image dimensions must be at least 16 pixels..
         /// </summary>
-        internal static string ImageTooSmall {
+        public static string ImageTooSmall {
             get {
                 return ResourceManager.GetString("ImageTooSmall", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace IconMaker.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Icon already has an image of size {0}..
         /// </summary>
-        internal static string SizeAlreadyPresent {
+        public static string SizeAlreadyPresent {
             get {
                 return ResourceManager.GetString("SizeAlreadyPresent", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace IconMaker.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Image width and height must be equal..
         /// </summary>
-        internal static string WidthHeightNotEqual {
+        public static string WidthHeightNotEqual {
             get {
                 return ResourceManager.GetString("WidthHeightNotEqual", resourceCulture);
             }

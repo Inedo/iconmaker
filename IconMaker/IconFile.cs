@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Windows.Media.Imaging;
+﻿using System.IO;
+using System.Text;
 
 namespace IconMaker
 {
@@ -12,16 +9,9 @@ namespace IconMaker
     public sealed class IconFile
     {
         /// <summary>
-        /// Initializes a new instance of the IconFile class.
-        /// </summary>
-        public IconFile()
-        {
-        }
-
-        /// <summary>
         /// Gets the images contained in the icon.
         /// </summary>
-        public IconImageCollection Images { get; } = new IconImageCollection();
+        public IconImageCollection Images { get; } = new();
 
         /// <summary>
         /// Saves the icon to a file.
@@ -29,13 +19,10 @@ namespace IconMaker
         /// <param name="fileName">Name of file.</param>
         public void Save(string fileName)
         {
-            if(fileName == null)
-                throw new ArgumentNullException("fileName");
+            ArgumentNullException.ThrowIfNull(fileName);
 
-            using(var stream = File.OpenWrite(fileName))
-            {
-                this.Save(stream);
-            }
+            using var stream = File.OpenWrite(fileName);
+            this.Save(stream);
         }
 
         /// <summary>
@@ -44,10 +31,9 @@ namespace IconMaker
         /// <param name="stream">Stream into which icon is saved.</param>
         public void Save(Stream stream)
         {
-            if(stream == null)
-                throw new ArgumentNullException("stream");
+            ArgumentNullException.ThrowIfNull(stream);
 
-            BinaryWriter writer = new BinaryWriter(stream);
+            using var writer = new BinaryWriter(stream, Encoding.UTF8, true);
 
             var sortedImages = this.Images;
             var imageData = new Dictionary<int, byte[]>();
@@ -58,8 +44,8 @@ namespace IconMaker
             writer.Write((ushort)0);    // must be 0
             writer.Write((ushort)1);    // 1 = ico file
             writer.Write((ushort)this.Images.Count); // number of sizes
-            
-            foreach(var image in sortedImages)
+
+            foreach (var image in sortedImages)
             {
                 var data = GetImageData(image);
                 imageData.Add(image.PixelWidth, data);
@@ -80,7 +66,7 @@ namespace IconMaker
                              orderby i.Key
                              select i.Value;
 
-            foreach(var data in sortedData)
+            foreach (var data in sortedData)
                 writer.Write(data);
         }
 
@@ -89,74 +75,71 @@ namespace IconMaker
         /// </summary>
         /// <param name="image">Icon image to serialize.</param>
         /// <returns>Serialized icon image.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "Assembly already requires full trust.")]
         private static byte[] GetImageData(BitmapSource image)
         {
-            using(MemoryStream memoryStream = new MemoryStream())
+            using var memoryStream = new MemoryStream();
+            using var writer = new BinaryWriter(memoryStream, Encoding.UTF8, true);
+
+            if (image.Width < 256)
             {
-                BinaryWriter writer = new BinaryWriter(memoryStream);
+                int width = image.PixelWidth;
+                int pixelCount = width * width;
+                int maskWidth = width / 8;
+                if ((maskWidth % 4) != 0)
+                    maskWidth += 3 - (maskWidth % 4);
 
-                if(image.Width < 256)
+                writer.Write(40);   // size of BITMAPINFOHEADER
+                writer.Write(width);  // icon width/height
+                writer.Write(width * 2);  // icon height * 2 (AND plane)
+                writer.Write((short)1); // must be 1
+                writer.Write((short)32);    // bits per pixel
+                writer.Write(0);    // must be 0
+                writer.Write(pixelCount * 4 + maskWidth * width);   // size of bitmap data
+                writer.Write(new byte[4 * 4]);  // must be 0
+
+                uint[] pixelData = new uint[pixelCount];
+                image.CopyPixels(pixelData, width * 4, 0);
+
+                for (int y = width - 1; y >= 0; y--)
                 {
-                    int width = image.PixelWidth;
-                    int pixelCount = width * width;
-                    int maskWidth = width / 8;
-                    if ((maskWidth % 4) != 0)
-                        maskWidth += 3 - (maskWidth % 4);
-
-                    writer.Write(40);   // size of BITMAPINFOHEADER
-                    writer.Write(width);  // icon width/height
-                    writer.Write(width * 2);  // icon height * 2 (AND plane)
-                    writer.Write((short)1); // must be 1
-                    writer.Write((short)32);    // bits per pixel
-                    writer.Write(0);    // must be 0
-                    writer.Write(pixelCount * 4 + maskWidth * width);   // size of bitmap data
-                    writer.Write(new byte[4 * 4]);  // must be 0
-
-                    uint[] pixelData = new uint[pixelCount];
-                    image.CopyPixels(pixelData, width * 4, 0);
-
-                    for(int y = width - 1; y >= 0; y--)
+                    for (int x = 0; x < width; x++)
                     {
-                        for (int x = 0; x < width; x++)
-                        {
-                            uint srcPixel = pixelData[(y * width) + x];
-                            if ((srcPixel >> 24) != 0)
-                                writer.Write(srcPixel);
-                            else
-                                writer.Write((uint)0);
-                        }
-                    }
-
-                    for (int y = width - 1; y >= 0; y--)
-                    {
-                        for (int x = 0; x < width / 8; x++)
-                        {
-                            byte maskValue = 0;
-
-                            for (int bit = 0; bit < 8; bit++)
-                            {
-                                uint srcPixel = pixelData[(y * width) + (x * 8) + bit];
-                                if ((srcPixel >> 24) < 128)
-                                    maskValue |= (byte)(1 << (7 - bit));
-                            }
-
-                            writer.Write(maskValue);
-                        }
-
-                        for (int padding = 0; padding < ((width / 8) % 4); padding++)
-                            writer.Write((byte)0);
+                        uint srcPixel = pixelData[(y * width) + x];
+                        if ((srcPixel >> 24) != 0)
+                            writer.Write(srcPixel);
+                        else
+                            writer.Write((uint)0);
                     }
                 }
-                else
-                {
-                    var pngEncoder = new PngBitmapEncoder();
-                    pngEncoder.Frames.Add(BitmapFrame.Create(image));
-                    pngEncoder.Save(memoryStream);
-                }
 
-                return memoryStream.ToArray();
+                for (int y = width - 1; y >= 0; y--)
+                {
+                    for (int x = 0; x < width / 8; x++)
+                    {
+                        byte maskValue = 0;
+
+                        for (int bit = 0; bit < 8; bit++)
+                        {
+                            uint srcPixel = pixelData[(y * width) + (x * 8) + bit];
+                            if ((srcPixel >> 24) < 128)
+                                maskValue |= (byte)(1 << (7 - bit));
+                        }
+
+                        writer.Write(maskValue);
+                    }
+
+                    for (int padding = 0; padding < ((width / 8) % 4); padding++)
+                        writer.Write((byte)0);
+                }
             }
+            else
+            {
+                var pngEncoder = new PngBitmapEncoder();
+                pngEncoder.Frames.Add(BitmapFrame.Create(image));
+                pngEncoder.Save(memoryStream);
+            }
+
+            return memoryStream.ToArray();
         }
     }
 }
